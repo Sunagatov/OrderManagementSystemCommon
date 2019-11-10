@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.zufar</groupId>
+  <artifactId>OrderManagementSystemUtil</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <description>Common dto, service, util and other classes for OrderManagementSystem.</description>
+
+  <name>OrderManagementSystemUtil</name>
+
+  <developers>
+    <developer>
+      <name>Zufar Sunagatov</name>
+      <email>zufar.sunagatov@gmail.com</email>
+      <url>https://vk.com/person99</url>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+        <role>tester</role>
+      </roles>
+      <timezone>Samara (UTC+4:00)</timezone>
+    </developer>
+  </developers>
+  
+  
+
+  <properties>
+    <!--                                               Project properties                                        -->
+    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.repository.url>https://github.com/Sunagatov/Client_Service</maven.repository.url>
+    <!--                                               Maven properties                                          -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <!--                                              Util properties                                            -->
+    <org.projectlombok.version>1.18.8</org.projectlombok.version>
+  </properties>
+
+  <dependencies>
+    <!--                                               Util dependencies                                         -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${org.projectlombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>2.0.1.Final</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
