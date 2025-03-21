@@ -1,5 +1,7 @@
 package com.festiva.businessLogic;
 
+import com.festiva.businessLogic.friend.FriendCreator;
+import com.festiva.businessLogic.friend.FriendRemover;
 import com.festiva.datastorage.CustomDAO;
 import com.festiva.datastorage.Friend;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -14,8 +16,8 @@ import java.util.List;
 
 public class BirthdayBot extends TelegramLongPollingBot {
 
-    private static final String BOT_TOKEN = "7533310276:AAFAK4cRIxeetR5vno_OjIYEM6dh1aruQVA";
-    private static final String BOT_USERNAME = "Festiva";
+    private static final String BOT_TOKEN = System.getenv("TELEGRAM_BOT_TOKEN");
+    private static final String BOT_USERNAME = System.getenv("TELEGRAM_BOT_USERNAME");
     private static final Logger LOGGER = Logger.getLogger(BirthdayBot.class.getName());
 
     private final CustomDAO dao;
@@ -32,7 +34,6 @@ public class BirthdayBot extends TelegramLongPollingBot {
         this.friendRemover = new FriendRemover(dao);
         this.monthSelector = new MonthSelector();
         this.callbackQuery = new Callback(dao);
-        BirthdayReminder birthdayReminder = new BirthdayReminder(dao, this);
     }
 
     @Override

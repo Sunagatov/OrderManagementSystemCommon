@@ -1,4 +1,4 @@
-package com.festiva.businessLogic;
+package com.festiva.businessLogic.friend;
 
 import com.festiva.datastorage.CustomDAO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

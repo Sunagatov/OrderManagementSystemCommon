@@ -10,7 +10,7 @@ import java.util.List;
 public class Callback {
 
     private final CustomDAO dao;
-    BirthdateInfoProvider birthdateInfoProvider;
+    private final BirthdateInfoProvider birthdateInfoProvider;
 
     public Callback(CustomDAO dao) {
         this.dao = dao;

@@ -1,4 +1,4 @@
-package com.festiva.businessLogic;
+package com.festiva.businessLogic.friend;
 
 import com.festiva.datastorage.CustomDAO;
 import com.festiva.datastorage.Friend;

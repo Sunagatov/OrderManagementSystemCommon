@@ -21,8 +21,9 @@ public class MongoDAO implements CustomDAO {
     private final MongoCollection<Document> usersCollection;
 
     public MongoDAO() {
-        String databaseName = "festivadatabase";
-        String collectionName = "users";
+        // Use the database name as seen in your listing
+        String databaseName = System.getenv("MONGO_DATABASE_NAME");
+        String collectionName = System.getenv("MONGO_COLLECTION_NAME");
 
         this.mongoClient = new MongoClientProvider().get();
         this.usersCollection = mongoClient.getDatabase(databaseName).getCollection(collectionName);
@@ -47,15 +48,15 @@ public class MongoDAO implements CustomDAO {
         Bson filter = Filters.eq("telegramUserId", telegramUserId);
         Document userDoc = usersCollection.find(filter).first();
 
-        if (userDoc != null) {
-            List<Document> friendDocs = userDoc.getList("friends", Document.class);
+        if (userDoc != null && userDoc.containsKey("friends")) {
+            // Provide an empty list as default if "friends" is missing
+            List<Document> friendDocs = userDoc.getList("friends", Document.class, new ArrayList<>());
             for (Document friendDoc : friendDocs) {
                 String name = friendDoc.getString("name");
                 LocalDate birthDate = LocalDate.parse(friendDoc.getString("birthDate"));
                 friends.add(new Friend(name, birthDate));
             }
         }
-
         return friends;
     }
 
@@ -64,16 +65,17 @@ public class MongoDAO implements CustomDAO {
         Bson filter = Filters.eq("telegramUserId", telegramUserId);
         Document userDoc = usersCollection.find(filter).first();
 
-        if (userDoc != null) {
-            List<Document> friendDocs = userDoc.getList("friends", Document.class);
+        if (userDoc != null && userDoc.containsKey("friends")) {
+            List<Document> friendDocs = userDoc.getList("friends", Document.class, new ArrayList<>());
             for (Document friendDoc : friendDocs) {
-                if (friendDoc.getString("name").equals(name)) {
+                if (name.equals(friendDoc.getString("name"))) {
                     return true;
                 }
             }
         }
         return false;
     }
+
     @Override
     public void deleteFriend(long telegramUserId, String name) {
         Bson filter = Filters.eq("telegramUserId", telegramUserId);
@@ -86,16 +88,13 @@ public class MongoDAO implements CustomDAO {
     public void close() {
         if (mongoClient != null) {
             mongoClient.close();
-            System.out.println("Соединение с MongoDB закрыто.");
+            System.out.println("Connection to MongoDB closed.");
         }
     }
 
     @Override
     public List<Friend> getAllBySortedByDayMonth(long telegramUserId) {
         List<Friend> friends = getFriends(telegramUserId);
-        if (friends.isEmpty()) {
-            return friends;
-        }
         friends.sort(Comparator.comparing(friend -> friend.getBirthDate().withYear(2000)));
         return friends;
     }
@@ -104,9 +103,6 @@ public class MongoDAO implements CustomDAO {
     public List<Friend> getAllSortedByUpcomingBirthday(long telegramUserId) {
         LocalDate currentDate = LocalDate.now();
         List<Friend> friends = getFriends(telegramUserId);
-        if (friends.isEmpty()) {
-            return friends;
-        }
         friends.sort(Comparator.comparing(friend -> nextBirthday(friend.getBirthDate(), currentDate)));
         return friends;
     }
@@ -120,7 +116,7 @@ public class MongoDAO implements CustomDAO {
 
     private LocalDate nextBirthday(LocalDate birthDate, LocalDate currentDate) {
         LocalDate nextBirthday = birthDate.withYear(currentDate.getYear());
-        if (nextBirthday.isBefore(currentDate)) {
+        if (!nextBirthday.isAfter(currentDate)) {
             nextBirthday = nextBirthday.plusYears(1);
         }
         return nextBirthday;

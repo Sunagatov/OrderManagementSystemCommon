@@ -1,4 +1,5 @@
 package com.festiva.businessLogic;
+
 import com.festiva.datastorage.Friend;
 
 import java.time.LocalDate;
