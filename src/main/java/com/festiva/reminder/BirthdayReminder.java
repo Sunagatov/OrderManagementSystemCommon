@@ -23,7 +23,6 @@ public class BirthdayReminder {
 
     @Scheduled(cron = "0 0 0 * * *") // каждый день в полночь
     public void checkBirthdays() {
-        log.info("Начало проверки дней рождения...");
         List<Long> allUserIds = dao.getAllUserIds();
         for (Long userId : allUserIds) {
             List<Friend> friends = dao.getFriends(userId);
@@ -31,7 +30,6 @@ public class BirthdayReminder {
                 checkAndNotify(userId, friend);
             }
         }
-        log.info("Проверка дней рождения завершена.");
     }
 
     private void checkAndNotify(Long userId, Friend friend) {

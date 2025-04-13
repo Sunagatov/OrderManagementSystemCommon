@@ -2,13 +2,11 @@ package com.festiva.command.handler;
 
 import com.festiva.command.CommandHandler;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class StartCommandHandler implements CommandHandler {
 
