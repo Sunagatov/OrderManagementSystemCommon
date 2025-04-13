@@ -1,8 +1,8 @@
 package com.festiva.datastorage.mongo;
 
 import com.festiva.datastorage.CustomDAO;
-import com.festiva.datastorage.Friend;
-import com.festiva.datastorage.UserEntity;
+import com.festiva.datastorage.entity.Friend;
+import com.festiva.datastorage.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

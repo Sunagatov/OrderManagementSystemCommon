@@ -1,6 +1,6 @@
 package com.festiva.datastorage.mongo;
 
-import com.festiva.datastorage.UserEntity;
+import com.festiva.datastorage.entity.UserEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

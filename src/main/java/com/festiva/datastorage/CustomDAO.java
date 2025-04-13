@@ -1,5 +1,7 @@
 package com.festiva.datastorage;
 
+import com.festiva.datastorage.entity.Friend;
+
 import java.util.List;
 
 public interface CustomDAO {

@@ -1,8 +1,7 @@
 package com.festiva.bot;
 
 import com.festiva.datastorage.CustomDAO;
-import com.festiva.datastorage.Friend;
-import com.festiva.handler.helper.BirthdateInfoProvider;
+import com.festiva.datastorage.entity.Friend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,6 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -21,7 +22,6 @@ public class Callback {
     private static final String CURRENT_MONTH = "CURRENT";
 
     private final CustomDAO dao;
-    private final BirthdateInfoProvider birthdateInfoProvider;
 
     /**
      * Handles an incoming CallbackQuery and returns an EditMessageText response containing
@@ -89,6 +89,29 @@ public class Callback {
      */
     private String getBirthdaysForMonth(long telegramUserId, int month) {
         List<Friend> friends = dao.getAllBySortedByDayMonth(telegramUserId);
-        return birthdateInfoProvider.birthDatesInMonth(friends, month);
+        return birthDatesInMonth(friends, month);
+    }
+
+    public String birthDatesInMonth(List<Friend> friends, int month) {
+        LocalDate currentDate = LocalDate.now();
+        int monthToShow = (month == 0) ? currentDate.getMonthValue() : month;
+
+        List<Friend> friendsWithBirthdayThisMonth = friends.stream()
+                .filter(friend -> friend.getBirthDate().getMonthValue() == monthToShow)
+                .toList();
+
+        if (friendsWithBirthdayThisMonth.isEmpty()) {
+            return "В выбранном месяце нет дней рождения.";
+        }
+
+        StringBuilder response = new StringBuilder("Дни рождения в " + monthToShow + "-м месяце:\n");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        for (Friend friend : friendsWithBirthdayThisMonth) {
+            response.append("* ").append(friend.getBirthDate().format(formatter))
+                    .append(" ").append(friend.getName())
+                    .append(" (сейчас пользователю ").append(friend.getAge()).append(")")
+                    .append("\n");
+        }
+        return response.toString();
     }
 }

@@ -1,22 +1,23 @@
-package com.festiva.handler;
+package com.festiva.command.handler;
 
 import com.festiva.command.CommandHandler;
-import com.festiva.friend.FriendRemover;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
-public class RemoveCommandHandler implements CommandHandler {
-
-    private final FriendRemover friendRemover;
+public class DefaultCommandHandler implements CommandHandler {
 
     @Override
     public SendMessage handle(Update update) {
         long chatId = update.getMessage().getChatId();
-        String text = update.getMessage().getText();
-        return friendRemover.handleRemoveFriend(chatId, text);
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText("Неизвестная команда. Используй /help для списка команд.");
+        return message;
     }
 }

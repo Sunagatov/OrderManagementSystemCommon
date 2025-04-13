@@ -1,14 +1,14 @@
 package com.festiva.command;
 
-import com.festiva.handler.AddFriendCommandHandler;
-import com.festiva.handler.BirthdaysCommandHandler;
-import com.festiva.handler.DefaultCommandHandler;
-import com.festiva.handler.HelpCommandHandler;
-import com.festiva.handler.JubileeCommandHandler;
-import com.festiva.handler.ListCommandHandler;
-import com.festiva.handler.RemoveCommandHandler;
-import com.festiva.handler.StartCommandHandler;
-import com.festiva.handler.UpcomingBirthdaysCommandHandler;
+import com.festiva.command.handler.AddFriendCommandHandler;
+import com.festiva.command.handler.BirthdaysCommandHandler;
+import com.festiva.command.handler.DefaultCommandHandler;
+import com.festiva.command.handler.HelpCommandHandler;
+import com.festiva.command.handler.JubileeCommandHandler;
+import com.festiva.command.handler.ListCommandHandler;
+import com.festiva.command.handler.RemoveCommandHandler;
+import com.festiva.command.handler.StartCommandHandler;
+import com.festiva.command.handler.UpcomingBirthdaysCommandHandler;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

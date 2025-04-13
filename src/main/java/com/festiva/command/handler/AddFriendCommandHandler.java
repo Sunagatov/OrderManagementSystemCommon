@@ -1,20 +1,40 @@
-package com.festiva.friend;
+package com.festiva.command.handler;
 
+import com.festiva.command.CommandHandler;
 import com.festiva.datastorage.CustomDAO;
-import com.festiva.datastorage.Friend;
+import com.festiva.datastorage.entity.Friend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
-public class FriendCreator {
+public class AddFriendCommandHandler implements CommandHandler {
 
     private final CustomDAO dao;
 
-    public SendMessage handleAddFriend(long chatId, Long telegramUserId, String messageText) {
+    @Override
+    public SendMessage handle(Update update) {
+        long chatId = update.getMessage().getChatId();
+        Long telegramUserId = update.getMessage().getFrom().getId();
+        String text = update.getMessage().getText();
+        SendMessage response;
+
+        if (text.equals("/add")) {
+            response = new SendMessage();
+            response.setChatId(String.valueOf(chatId));
+            response.setText("Введите имя и дату рождения следующим образом: /add Имя гггг-мм-дд");
+        } else {
+            // Delegate to FriendCreator for processing.
+            response = handleAddFriend(chatId, telegramUserId, text);
+        }
+        return response;
+    }
+
+    private SendMessage handleAddFriend(long chatId, Long telegramUserId, String messageText) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
 

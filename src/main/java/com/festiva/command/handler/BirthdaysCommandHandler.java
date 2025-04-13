@@ -1,4 +1,4 @@
-package com.festiva.handler;
+package com.festiva.command.handler;
 
 import com.festiva.command.CommandHandler;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.festiva.reminder;
 
 import com.festiva.bot.BirthdayBot;
 import com.festiva.datastorage.CustomDAO;
-import com.festiva.datastorage.Friend;
+import com.festiva.datastorage.entity.Friend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
