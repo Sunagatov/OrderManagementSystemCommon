@@ -1,30 +1,23 @@
 package com.festiva.datastorage;
 
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDate;
 import java.time.Period;
 
+@Data
+@Document
 public class Friend {
+
+    @Id
+    private String id;
     private String name;
     private LocalDate birthDate;
 
     public Friend(String name, LocalDate birthDate) {
         this.name = name;
-        this.birthDate = birthDate;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -34,13 +27,5 @@ public class Friend {
 
     public int getNextAge() {
         return getAge() + 1;
-    }
-
-    @Override
-    public String toString() {
-        return "Friend{" +
-                "name='" + name + '\'' +
-                ", birthDate=" + birthDate +
-                '}';
     }
 }

@@ -1,21 +1,20 @@
-package com.festiva.businessLogic.friend;
+package com.festiva.friend;
 
 import com.festiva.datastorage.CustomDAO;
 import com.festiva.datastorage.Friend;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.LocalDate;
 
+@Component
+@RequiredArgsConstructor
 public class FriendCreator {
 
     private final CustomDAO dao;
-    public FriendCreator(CustomDAO dao) {
-        this.dao = dao;
-    }
 
-    public SendMessage handleAddFriend(long chatId,
-                                     Long telegramUserId,
-                                     String messageText) {
+    public SendMessage handleAddFriend(long chatId, Long telegramUserId, String messageText) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
 

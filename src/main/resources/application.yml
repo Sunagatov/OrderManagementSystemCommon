@@ -1,0 +1,20 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/?retryWrites=true&w=majority&appName=FestivaDatabase&readPreference=primary
+      database: ${MONGO_DATABASE_NAME}
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+    username: ${TELEGRAM_BOT_USERNAME}
+
+# Spring Boot manages the version of spring-kafka automatically.
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+  api-key: ${KAFKA_API_KEY}
+  api-secret: ${KAFKA_API_SECRET}
+
+# Application-specific property to enable/disable Kafka
+app:
+  kafka:
+    enabled: ${APP_KAFKA_ENABLED:false}

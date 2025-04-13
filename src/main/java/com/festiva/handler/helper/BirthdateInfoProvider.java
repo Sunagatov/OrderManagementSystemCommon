@@ -1,14 +1,14 @@
-package com.festiva.businessLogic;
+package com.festiva.handler.helper;
 
 import com.festiva.datastorage.Friend;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ArrayList;
-import java.time.format.DateTimeFormatter;
 
+@Component
 public class BirthdateInfoProvider {
 
     public String allFriendsInfo(List<Friend> friends) {
@@ -49,7 +49,7 @@ public class BirthdateInfoProvider {
             upcomingBirthdate = LocalDate.of(year, month, date);
         }
 
-        return (int) ChronoUnit.DAYS.between(currentDate, upcomingBirthdate);
+        return (int) java.time.temporal.ChronoUnit.DAYS.between(currentDate, upcomingBirthdate);
     }
 
     public String birthDatesInMonth(List<Friend> friends, int month) {
@@ -116,7 +116,7 @@ public class BirthdateInfoProvider {
     }
 
     public String birthDateJubilee (List<Friend> friends) {
-        List<Friend> jubileeFriends = new ArrayList<>();
+        List<Friend> jubileeFriends = new java.util.ArrayList<>();
         for (Friend friend : friends) {
             int nextAge = friend.getNextAge();
             if (nextAge % 5 == 0) {

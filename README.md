@@ -1,119 +1,152 @@
----
-
 # Festiva Birthday Bot
 
-Festiva Birthday Bot is a Java-based Telegram bot that helps users manage and receive reminders about birthdays. The bot integrates with MongoDB Atlas for data storage and uses the Telegram Bot API to interact with users. Users can add friends with their birth dates, list all birthdays, view upcoming birthdays, and more.
+Festiva Birthday Bot is a Java-based Telegram bot that helps users manage and receive birthday reminders. It integrates with MongoDB Atlas for data storage and uses the Telegram Bot API (via long polling) to interact with users. With this bot, you can add friends with their birth dates, list birthdays, view upcoming birthdays, and receive milestone (jubilee) notifications.
+
+---
 
 ## Features
 
-- **User Management:**  
-  Add, remove, and list friends with their birth dates.
-- **Birthday Reminders:**  
-  Sort birthdays by day/month and upcoming dates.
-- **Jubilee Notifications:**  
-  Identify friends whose upcoming birthdays mark a milestone (e.g., every 5 years).
-- **Telegram Integration:**  
-  Interact with the bot using simple commands:
-  - `/start` – Welcome and command list.
-  - `/list` – List all friends.
-  - `/add` – Add a new friend with a name and birth date.
-  - `/remove` – Remove an existing friend.
-  - `/birthdays` – View birthdays by month.
-  - `/upcomingBirthdays` – View birthdays coming up in the next 30 days.
-  - `/jubilee` – View upcoming milestone birthdays.
-  - `/help` – Display help and command list.
+- **User Management:**
+    - Add, remove, and list friends with their birth dates.
+- **Birthday Reminders:**
+    - Display birthdays sorted by day/month.
+    - View upcoming birthdays within a set period.
+- **Jubilee Notifications:**
+    - Highlight milestone birthdays (e.g., every 5 years).
+- **Telegram Integration:**
+    - `/start` – Displays a welcome message and lists available commands.
+    - `/list` – Lists all registered friends.
+    - `/add` – Adds a new friend with a name and birth date.
+    - `/remove` – Removes an existing friend.
+    - `/birthdays` – Shows birthdays by month.
+    - `/upcomingBirthdays` – Displays birthdays coming up in the next 30 days.
+    - `/jubilee` – Highlights upcoming milestone birthdays.
+    - `/help` – Shows help and command instructions.
+
+---
 
 ## Prerequisites
 
-- **Java:** JDK 21 (or later) is recommended.
-- **Maven:** For dependency management and building the project.
-- **MongoDB Atlas:** A MongoDB Atlas cluster is required for data storage.  
-- **Telegram Bot Token:** Obtain a bot token from [BotFather](https://core.telegram.org/bots#6-botfather).
+- **Java:** JDK 21 (or later)
+- **Maven:** For dependency management and building the project
+- **MongoDB Atlas:** A cloud-based MongoDB cluster for data storage
+- **Telegram Bot Token:** Obtain one from [BotFather](https://core.telegram.org/bots#6-botfather)
 
-## Setup
+---
 
-### 1. Clone the Repository
+## Environment Variables
 
+The application uses environment variables (or JVM system properties) for secure configuration. Set the following variables before launching the app:
+
+### MongoDB Settings
+- `MONGO_USERNAME` – Your MongoDB Atlas username.
+- `MONGO_PASSWORD` – Your MongoDB Atlas password.
+- `MONGO_HOST` – Your MongoDB Atlas host.
+- *Optional:* `MONGO_DATABASE_NAME` – Defaults to `FestivaDatabase` if not set.
+
+### Telegram Bot Settings
+- `TELEGRAM_BOT_TOKEN` – Your Telegram bot token provided by BotFather.
+- `TELEGRAM_BOT_USERNAME` – The username of your Telegram bot.
+
+### Kafka Settings (Optional)
+- `KAFKA_BOOTSTRAP_SERVERS` – Kafka bootstrap server addresses.
+- `KAFKA_API_KEY` – Your Kafka API key.
+- `KAFKA_API_SECRET` – Your Kafka API secret.
+- *Optional:* `APP_KAFKA_ENABLED` – Set to `true` to enable Kafka; `false` to disable (defaults to `false` if not set).
+
+---
+
+### Setting Environment Variables
+
+#### Unix/Linux/MacOS
 ```bash
-git clone https://github.com/yourusername/festiva-birthday-bot.git
-cd festiva-birthday-bot
+export MONGO_USERNAME=yourMongoUsername
+export MONGO_PASSWORD=yourMongoPassword
+export MONGO_HOST=yourMongoHost
+
+export TELEGRAM_BOT_TOKEN=yourTelegramBotToken
+export TELEGRAM_BOT_USERNAME=YourBotUsername
+
+export KAFKA_BOOTSTRAP_SERVERS=yourKafkaServer:9092
+export KAFKA_API_KEY=yourKafkaApiKey
+export KAFKA_API_SECRET=yourKafkaApiSecret
+export APP_KAFKA_ENABLED=true
 ```
 
-### 2. Configure MongoDB Credentials
+#### Windows
+```powershell
+set MONGO_USERNAME=yourMongoUsername
+set MONGO_PASSWORD=yourMongoPassword
+set MONGO_HOST=festivacluster.q5ws1.mongodb.net
 
-The project reads sensitive data (username, password, host) from environment variables or JVM parameters. Ensure you have a user created in your MongoDB Atlas cluster with proper privileges.
+set TELEGRAM_BOT_TOKEN=yourTelegramBotToken
+set TELEGRAM_BOT_USERNAME=YourBotUsername
 
-**Set Environment Variables:**
-
-- **Unix/Linux/MacOS:**
-
-  ```bash
-  export MONGO_USERNAME=yourMongoUsername
-  export MONGO_PASSWORD=yourMongoPassword
-  export MONGO_HOST=yourClusterHost  # e.g., festivacluster.q5ws1.mongodb.net
-  ```
-
-- **Windows (CMD):**
-
-  ```cmd
-  set MONGO_USERNAME=yourMongoUsername
-  set MONGO_PASSWORD=yourMongoPassword
-  set MONGO_HOST=yourClusterHost
-  ```
-
-Alternatively, pass them as JVM parameters when running the application:
-
-```bash
-java -DMONGO_USERNAME=yourMongoUsername -DMONGO_PASSWORD=yourMongoPassword -DMONGO_HOST=yourClusterHost -jar target/yourapp.jar
+set KAFKA_BOOTSTRAP_SERVERS=yourKafkaServer:9092
+set KAFKA_API_KEY=yourKafkaApiKey
+set KAFKA_API_SECRET=yourKafkaApiSecret
+set APP_KAFKA_ENABLED=true
 ```
 
-### 3. Build the Project
+---
 
-Use Maven to compile and package the project:
+## Building the Project
+
+Use Maven to compile and package the application:
 
 ```bash
 mvn clean package
 ```
 
-### 4. Running the Application
+This will create a JAR file (e.g., `Festiva-1.0-SNAPSHOT.jar`) in the `target` directory.
 
-After building, run the application (make sure to include the environment variables or JVM parameters):
+---
 
+## Running with Docker
+
+A `Dockerfile` is included for containerized deployment.
+
+### Build the Docker Image
 ```bash
-java -jar target/yourapp.jar
+docker build -t festiva-birthday-bot .
 ```
 
-The application will initialize the MongoDB connection and start the Telegram bot.
+### Run the Docker Container
+Pass the required environment variables using the `-e` flag:
 
-## Code Structure
+```bash
+docker run --rm -p 8080:8080 \
+-e MONGO_USERNAME=yourMongoUsername \
+-e MONGO_PASSWORD=yourMongoPassword \
+-e MONGO_HOST=festivacluster.q5ws1.mongodb.net \
+-e TELEGRAM_BOT_TOKEN=yourTelegramBotToken \
+-e TELEGRAM_BOT_USERNAME=YourBotUsername \
+-e KAFKA_BOOTSTRAP_SERVERS=yourKafkaServer:9092 \
+-e KAFKA_API_KEY=yourKafkaApiKey \
+-e KAFKA_API_SECRET=yourKafkaApiSecret \
+-e APP_KAFKA_ENABLED=true \
+festiva-birthday-bot
+```
 
-- **`com.festiva.datastorage`:**  
-  Contains the data models (e.g., `Friend`, `User`) and DAO interfaces.
+The container exposes port 8080 and runs the bot. You can view the logs using:
 
-- **`com.festiva.datastorage.mongo`:**  
-  Includes classes for MongoDB connection:
-  - **`MongoClientProvider`** – Reads sensitive credentials from environment variables or system properties and creates a MongoDB client.
-  - **`MongoDAO`** – Implements data access operations (add, remove, list friends).
+```bash
+docker logs <container_id>
+```
 
-- **`com.festiva.businessLogic`:**  
-  Contains business logic for birthday reminders, message formatting, and Telegram bot command handling:
-  - **`BirthdayBot`** – Main Telegram bot class extending `TelegramLongPollingBot`.
-  - **`BirthdateInfoProvider`** – Prepares user-friendly birthday information.
-  - **`FriendCreator`**, **`FriendRemover`**, **`MonthSelector`**, and **`Callback`** – Handle specific bot commands and interactions.
+---
 
-- **`com.festiva`:**  
-  The main entry point of the application (`Main.java`), which initializes the DAO and registers the Telegram bot.
 
 ## Troubleshooting
 
-- **Authentication Errors:**  
-  If you encounter authentication errors (e.g., `MongoSecurityException`), double-check that the credentials and host values are correct and that your Atlas user is assigned the proper roles. Make sure your authentication source (usually `admin`) is correctly set in the connection string if necessary.
+- **MongoDB Connection Issues:**
+    - Double-check MongoDB credentials and network access.
+- **Environment Variables:**
+    - Verify with `echo $VAR` (Linux/macOS) or `echo %VAR%` (Windows CMD).
+- **Docker:**
+    - Use `docker logs <container_id>` for debugging.
 
-- **SRV Lookup Issues:**  
-  Ensure that your `MONGO_HOST` is in the proper format (e.g., `festivacluster.q5ws1.mongodb.net`) and that DNS resolution works for your network.
-
-- **SLF4J Warnings:**  
-  The log message `SLF4J: No SLF4J providers were found` is harmless and indicates that no SLF4J binding is present. You can add an SLF4J binding (e.g., `slf4j-simple`) if you wish to see logging output.
+---
 
 ## License
 

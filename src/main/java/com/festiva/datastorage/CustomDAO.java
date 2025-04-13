@@ -12,8 +12,6 @@ public interface CustomDAO {
 
     void deleteFriend(long telegramUserId, String name);
 
-    void close();
-
     List<Friend> getAllBySortedByDayMonth(long telegramUserId);
 
     List<Friend> getAllSortedByUpcomingBirthday(long telegramUserId);

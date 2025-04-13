@@ -1,62 +1,46 @@
-package com.festiva.businessLogic;
+package com.festiva.reminder;
 
+import com.festiva.bot.BirthdayBot;
 import com.festiva.datastorage.CustomDAO;
 import com.festiva.datastorage.Friend;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
+@Component
+@Slf4j
+@RequiredArgsConstructor
 public class BirthdayReminder {
 
     private final CustomDAO dao;
-    private final BirthdayBot bot;
-    private static final Logger LOGGER = Logger.getLogger(BirthdayReminder.class.getName());
+    private final BirthdayBot birthdayBot;
 
-    public BirthdayReminder(CustomDAO dao, BirthdayBot bot) {
-        this.dao = dao;
-        this.bot = bot;
-        startScheduler();
-    }
-
-    private void startScheduler() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-        scheduler.scheduleAtFixedRate(this::checkBirthdays, 0, 1, TimeUnit.DAYS);
-
-        LOGGER.info("Планировщик дней рождения запущен.");
-    }
-
-    private void checkBirthdays() {
-        LOGGER.info("Начало проверки дней рождения...");
-
-        List<Long> allUserIds = getAllUserIds();
-
+    @Scheduled(cron = "0 0 0 * * *") // каждый день в полночь
+    public void checkBirthdays() {
+        log.info("Начало проверки дней рождения...");
+        List<Long> allUserIds = dao.getAllUserIds();
         for (Long userId : allUserIds) {
             List<Friend> friends = dao.getFriends(userId);
             for (Friend friend : friends) {
                 checkAndNotify(userId, friend);
             }
         }
-
-        LOGGER.info("Проверка дней рождения завершена.");
+        log.info("Проверка дней рождения завершена.");
     }
 
     private void checkAndNotify(Long userId, Friend friend) {
         LocalDate today = LocalDate.now();
         LocalDate nextBirthday = friend.getBirthDate().withYear(today.getYear());
-
         if (nextBirthday.isBefore(today)) {
             nextBirthday = nextBirthday.plusYears(1);
         }
-
         long daysUntilBirthday = ChronoUnit.DAYS.between(today, nextBirthday);
-
         if (daysUntilBirthday == 0) {
             sendNotification(userId, friend, "Сегодня день рождения у вашего друга " + friend.getName() + "!");
         } else if (daysUntilBirthday == 1) {
@@ -66,20 +50,16 @@ public class BirthdayReminder {
         }
     }
 
-    private void sendNotification(Long userId, Friend friend, String message) {
+    private void sendNotification(Long userId, Friend friend, String text) {
         SendMessage notification = new SendMessage();
         notification.setChatId(String.valueOf(userId));
-        notification.setText(message);
-
+        notification.setText(text);
         try {
-            bot.execute(notification);
-            LOGGER.info("Уведомление отправлено пользователю " + userId + " о дне рождения " + friend.getName());
+            // Send the message using the method that accepts a SendMessage object.
+            birthdayBot.sendMessage(notification);
+            log.info("Уведомление отправлено пользователю {} о дне рождения {}", userId, friend.getName());
         } catch (Exception e) {
-            LOGGER.severe("Ошибка при отправке уведомления: " + e.getMessage());
+            log.error("Ошибка при отправке уведомления", e);
         }
-    }
-
-    private List<Long> getAllUserIds() {
-        return List.of(123456789L, 987654321L);
     }
 }
