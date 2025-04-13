@@ -1,6 +1,5 @@
-package com.festiva.config;
+package com.festiva.bot;
 
-import com.festiva.bot.BirthdayBot;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
