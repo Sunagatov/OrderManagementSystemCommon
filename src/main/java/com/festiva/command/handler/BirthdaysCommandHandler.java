@@ -1,7 +1,6 @@
 package com.festiva.command.handler;
 
 import com.festiva.command.CommandHandler;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class BirthdaysCommandHandler implements CommandHandler {
 
     @Override
@@ -27,7 +25,8 @@ public class BirthdaysCommandHandler implements CommandHandler {
 
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText("Выберите месяц, чтобы посмотреть дни рождения:");
+        message.setParseMode("HTML");
+        message.setText("<b>Просмотр дней рождения</b>\n\nВыберите месяц, чтобы увидеть список дней рождения:");
         message.setReplyMarkup(markup);
 
         return message;
@@ -36,22 +35,18 @@ public class BirthdaysCommandHandler implements CommandHandler {
     private List<List<InlineKeyboardButton>> buildKeyboardRows() {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
-        // First row: button for current month selection
+        // Первая строка: кнопка для текущего месяца
         List<InlineKeyboardButton> currentMonthRow = new ArrayList<>();
         currentMonthRow.add(createButton("Текущий месяц", "MONTH_CURRENT"));
         rows.add(currentMonthRow);
 
-        // Remaining rows: buttons for each month (numeric buttons)
+        // Остальные строки: кнопки для каждого месяца (числовые кнопки)
         final int columns = 4;
         List<InlineKeyboardButton> row = new ArrayList<>();
-
         for (int month = 1; month <= 12; month++) {
-
             InlineKeyboardButton button = createButton(String.valueOf(month), "MONTH_" + month);
             row.add(button);
-
             if (month % columns == 0) {
-                // Add a copy of the row and clear for the next set
                 rows.add(new ArrayList<>(row));
                 row.clear();
             }

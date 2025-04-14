@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -25,20 +26,21 @@ public class JubileeCommandHandler implements CommandHandler {
 
         String responseText;
         if (friends.isEmpty()) {
-            responseText = "Список пользователей пуст.";
+            responseText = "<b>Список пользователей пуст.</b>";
         } else {
             responseText = birthDateJubilee(friends);
         }
 
         SendMessage response = new SendMessage();
         response.setChatId(String.valueOf(chatId));
+        response.setParseMode("HTML");
         response.setText(responseText);
 
         return response;
     }
 
-    public String birthDateJubilee (List<Friend> friends) {
-        List<Friend> jubileeFriends = new java.util.ArrayList<>();
+    public String birthDateJubilee(List<Friend> friends) {
+        List<Friend> jubileeFriends = new ArrayList<>();
         for (Friend friend : friends) {
             int nextAge = friend.getNextAge();
             if (nextAge % 5 == 0) {
@@ -46,16 +48,17 @@ public class JubileeCommandHandler implements CommandHandler {
             }
         }
         if (jubileeFriends.isEmpty()) {
-            return "В ближайшее время нет юбилейных дней рождения.";
+            return "<b>В ближайшее время нет юбилейных дней рождения.</b>";
         }
-        StringBuilder response = new StringBuilder("Пользователи, у которых следующий день рождения - юбилей:\n");
+        StringBuilder response = new StringBuilder("<b>Юбилейные дни рождения</b>\n\n");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
         for (Friend friend : jubileeFriends) {
-            response.append("* ").append(friend.getBirthDate().format(formatter))
-                    .append(" ").append(friend.getName())
-                    .append(" (исполнится ").append(friend.getNextAge())
-                    .append(" лет)\n");
+            response.append("– ")
+                    .append("<b>").append(friend.getBirthDate().format(formatter)).append("</b> ")
+                    .append("<i>").append(friend.getName()).append("</i>")
+                    .append(" (исполнится <b>").append(friend.getNextAge()).append("</b> лет)")
+                    .append("\n");
         }
         return response.toString();
     }
