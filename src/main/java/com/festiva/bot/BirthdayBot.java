@@ -33,13 +33,10 @@ public class BirthdayBot extends TelegramLongPollingBot {
             log.warn("Received a null update.");
             return;
         }
-        log.info("Update received: {}", update);
         try {
             if (update.hasCallbackQuery()) {
-                log.info("Processing a callback query update.");
                 processCallbackQuery(update);
             } else {
-                log.info("Processing a message update.");
                 processMessageUpdate(update);
             }
         } catch (Exception e) {
@@ -55,7 +52,6 @@ public class BirthdayBot extends TelegramLongPollingBot {
         if (editMessage == null) {
             log.warn("Callback query did not produce a response.");
         } else {
-            log.info("Sending response for callback query: {}", editMessage);
             execute(editMessage);
         }
     }
@@ -68,7 +64,6 @@ public class BirthdayBot extends TelegramLongPollingBot {
         if (response == null) {
             log.warn("No response generated from command router for update: {}", update);
         } else {
-            log.info("Sending message response: {}", response);
             execute(response);
         }
     }
@@ -83,7 +78,6 @@ public class BirthdayBot extends TelegramLongPollingBot {
      */
     public void sendMessage(SendMessage message) {
         try {
-            log.info("Sending message: {}", message);
             execute(message);
         } catch (Exception e) {
             log.error("Error while sending message: {}", message, e);

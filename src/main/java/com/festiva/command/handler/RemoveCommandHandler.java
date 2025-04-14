@@ -2,6 +2,8 @@ package com.festiva.command.handler;
 
 import com.festiva.command.CommandHandler;
 import com.festiva.datastorage.CustomDAO;
+import com.festiva.state.BotState;
+import com.festiva.state.UserStateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,33 +14,50 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class RemoveCommandHandler implements CommandHandler {
 
     private final CustomDAO dao;
+    private final UserStateService userStateService;
 
     @Override
     public SendMessage handle(Update update) {
         long chatId = update.getMessage().getChatId();
-        String messageText = update.getMessage().getText();
+        Long telegramUserId = update.getMessage().getFrom().getId();
+        String messageText = update.getMessage().getText().trim();
 
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
+        SendMessage response = new SendMessage();
+        response.setChatId(String.valueOf(chatId));
+        response.setParseMode("HTML");
 
-        try {
-            String[] parts = messageText.split(" ", 2);
-            if (parts.length < 2 || parts[1].trim().isEmpty()) {
-                message.setText("Неверный формат. Используйте: /remove Имя");
-                return message;
-            }
-            String name = parts[1].trim();
-            if (!dao.friendExists(chatId, name)) {
-                message.setText("Пользователь с именем " + name + " не найден.");
-                return message;
-            }
-            dao.deleteFriend(chatId, name);
-            message.setText("Пользователь " + name + " успешно удален!");
-            return message;
-
-        } catch (Exception e) {
-            message.setText("Ошибка при удалении пользователя. Попробуйте еще раз.");
-            return message;
+        // Если пользователь отправил только "/remove" – переводим его в режим ожидания ввода имени
+        if (messageText.equals("/remove")) {
+            userStateService.setState(telegramUserId, BotState.WAITING_FOR_REMOVE_FRIEND_INPUT);
+            response.setText("<b><i>Введите имя пользователя, которого необходимо удалить:</i></b>");
+            return response;
+        } else {
+            return handleAwaitingInput(update);
         }
+    }
+
+    /**
+     * Обрабатывает ввод пользователя в состоянии WAITING_FOR_REMOVE_FRIEND_INPUT.
+     * Ожидается, что пользователь введёт только имя друга.
+     */
+    public SendMessage handleAwaitingInput(Update update) {
+        long chatId = update.getMessage().getChatId();
+        Long telegramUserId = update.getMessage().getFrom().getId();
+        String friendName = update.getMessage().getText().trim();
+
+        SendMessage response = new SendMessage();
+        response.setChatId(String.valueOf(chatId));
+        response.setParseMode("HTML");
+
+        if (!dao.friendExists(telegramUserId, friendName)) {
+            response.setText("<b><i>Пользователь с именем \"" + friendName +
+                    "\" не найден. Введите другое имя или отправьте /cancel для отмены.</i></b>");
+            return response;
+        }
+
+        dao.deleteFriend(telegramUserId, friendName);
+        response.setText("<b><i>Пользователь \"" + friendName + "\" успешно удалён!</i></b>");
+        userStateService.clearState(telegramUserId);
+        return response;
     }
 }

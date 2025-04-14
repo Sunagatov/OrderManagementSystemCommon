@@ -55,7 +55,6 @@ public class BirthdayReminder {
         try {
             // Send the message using the method that accepts a SendMessage object.
             birthdayBot.sendMessage(notification);
-            log.info("Уведомление отправлено пользователю {} о дне рождения {}", userId, friend.getName());
         } catch (Exception e) {
             log.error("Ошибка при отправке уведомления", e);
         }

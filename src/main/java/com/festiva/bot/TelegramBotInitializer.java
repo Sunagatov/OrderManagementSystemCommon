@@ -20,7 +20,7 @@ public class TelegramBotInitializer {
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(birthdayBot);
-            log.info("Бот запущен через TelegramBotInitializer!");
+            log.info("Бот запущен!");
         } catch (TelegramApiException e) {
             log.error("Ошибка регистрации бота", e);
         }
