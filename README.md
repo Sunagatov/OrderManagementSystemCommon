@@ -19,7 +19,7 @@ Festiva Birthday Bot is a Java-based Telegram bot that helps users manage and re
     - `/add` – Adds a new friend with a name and birth date.
     - `/remove` – Removes an existing friend.
     - `/birthdays` – Shows birthdays by month.
-    - `/upcomingBirthdays` – Displays birthdays coming up in the next 30 days.
+    - `/upcomingbirthdays` – Displays birthdays coming up in the next 30 days.
     - `/jubilee` – Highlights upcoming milestone birthdays.
     - `/help` – Shows help and command instructions.
 

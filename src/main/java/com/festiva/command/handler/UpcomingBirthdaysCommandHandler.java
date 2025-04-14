@@ -30,6 +30,7 @@ public class UpcomingBirthdaysCommandHandler implements CommandHandler {
 
         SendMessage response = new SendMessage();
         response.setChatId(String.valueOf(chatId));
+        response.setParseMode("HTML");
         response.setText(responseText);
 
         return response;
@@ -47,40 +48,35 @@ public class UpcomingBirthdaysCommandHandler implements CommandHandler {
                         .thenComparing(Friend::getName))
                 .toList();
         if (upcomingFriends.isEmpty()) {
-            return "В ближайшие 30 дней нет дней рождения.";
+            return "<b>В ближайшие 30 дней нет дней рождения.</b>";
         }
-        StringBuilder sb = new StringBuilder("Ближайшие дни рождения:\n");
+        StringBuilder sb = new StringBuilder("<b>Ближайшие дни рождения:</b>\n\n");
         for (Friend friend : upcomingFriends) {
             long daysUntil = calculateDaysCountBeforeUpcomingBirthday(friend);
             LocalDate friendNextBirthday = getNextBirthday(friend);
-            sb.append("* ")
-                    .append(friendNextBirthday.format(formatter))
-                    .append(" ")
-                    .append(friend.getName())
-                    .append(" (исполнится ")
-                    .append(friend.getNextAge())
-                    .append(", дней до дня рождения - ")
-                    .append(daysUntil)
-                    .append(")\n");
+            sb.append("– ")
+                    .append("<b>").append(friendNextBirthday.format(formatter)).append("</b> ")
+                    .append("<i>").append(friend.getName()).append("</i>")
+                    .append(" (исполнится <b>").append(friend.getNextAge()).append("</b>, ")
+                    .append("дней до дня рождения — <b>").append(daysUntil).append("</b>)\n");
         }
         return sb.toString();
     }
 
     public int calculateDaysCountBeforeUpcomingBirthday(Friend friend) {
         LocalDate currentDate = LocalDate.now();
-        LocalDate birthdate = friend.getBirthDate();
+        LocalDate birthDate = friend.getBirthDate();
 
-        int month = birthdate.getMonthValue();
-        int date = birthdate.getDayOfMonth();
+        int month = birthDate.getMonthValue();
+        int day = birthDate.getDayOfMonth();
         int year = currentDate.getYear();
-        LocalDate upcomingBirthdate = LocalDate.of(year, month, date);
+        LocalDate upcomingBirthDate = LocalDate.of(year, month, day);
 
-        if (upcomingBirthdate.isBefore(currentDate)) {
-            year = currentDate.getYear() + 1;
-            upcomingBirthdate = LocalDate.of(year, month, date);
+        if (upcomingBirthDate.isBefore(currentDate)) {
+            upcomingBirthDate = LocalDate.of(year + 1, month, day);
         }
 
-        return (int) java.time.temporal.ChronoUnit.DAYS.between(currentDate, upcomingBirthdate);
+        return (int) java.time.temporal.ChronoUnit.DAYS.between(currentDate, upcomingBirthDate);
     }
 
     private LocalDate getNextBirthday(Friend friend) {

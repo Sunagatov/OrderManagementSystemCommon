@@ -26,20 +26,20 @@ public class ListCommandHandler implements CommandHandler {
 
         String response;
         if (friends.isEmpty()) {
-            response = "Список пользователей пуст.";
+            response = "<b>Список пользователей пуст.</b>";
         } else {
             response = allFriendsInfo(friends);
         }
 
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
+        message.setParseMode("HTML");
         message.setText(response);
-
         return message;
     }
 
     public String allFriendsInfo(List<Friend> friends) {
-        StringBuilder response = new StringBuilder("Список пользователей (текущий календарный год):\n");
+        StringBuilder response = new StringBuilder("<b>Список пользователей (текущий календарный год):</b>\n\n");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate currentDate = LocalDate.now();
 
@@ -47,16 +47,16 @@ public class ListCommandHandler implements CommandHandler {
             LocalDate birthDate = friend.getBirthDate();
             LocalDate nextBirthday = birthDate.withYear(currentDate.getYear());
             if (nextBirthday.isBefore(currentDate) || nextBirthday.isEqual(currentDate)) {
-                response.append("* ").append(friend.getBirthDate().format(formatter))
-                        .append(" ").append(friend.getName())
-                        .append(" (в этом году исполнилось ").append(friend.getAge()).append(")")
-                        .append("\n");
+                response.append("– ")
+                        .append("<b>").append(friend.getBirthDate().format(formatter)).append("</b> ")
+                        .append("<i>").append(friend.getName()).append("</i>")
+                        .append(" (в этом году исполнилось <b>").append(friend.getAge()).append("</b>)\n");
             } else {
-                response.append("* ").append(friend.getBirthDate().format(formatter))
-                        .append(" ").append(friend.getName())
-                        .append(" (сейчас пользователю ").append(friend.getAge())
-                        .append(", в этом году исполнится ").append(friend.getNextAge()).append(")")
-                        .append("\n");
+                response.append("– ")
+                        .append("<b>").append(friend.getBirthDate().format(formatter)).append("</b> ")
+                        .append("<i>").append(friend.getName()).append("</i>")
+                        .append(" (сейчас пользователю <b>").append(friend.getAge())
+                        .append("</b>, в этом году исполнится <b>").append(friend.getNextAge()).append("</b>)\n");
             }
         }
         return response.toString();

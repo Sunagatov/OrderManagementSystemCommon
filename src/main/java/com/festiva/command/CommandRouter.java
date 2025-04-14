@@ -61,7 +61,7 @@ public class CommandRouter {
                         case "/add" -> addFriendCommandHandler.handle(update);
                         case "/remove" -> removeCommandHandler.handle(update);
                         case "/birthdays" -> birthdaysCommandHandler.handle(update);
-                        case "/upcomingBirthdays" -> upcomingBirthdaysCommandHandler.handle(update);
+                        case "/upcomingbirthdays" -> upcomingBirthdaysCommandHandler.handle(update);
                         case "/jubilee" -> jubileeCommandHandler.handle(update);
                         case "/help" -> helpCommandHandler.handle(update);
                         default -> defaultHandler.handle(update);

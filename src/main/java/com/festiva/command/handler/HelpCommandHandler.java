@@ -21,7 +21,7 @@ public class HelpCommandHandler implements CommandHandler {
                 "/remove - Удалить существующего друга\n\n" +
                 "<b>Просмотр дней рождения:</b>\n" +
                 "/birthdays - Дни рождения по месяцам\n" +
-                "/upcomingBirthdays - Ближайшие дни рождения\n" +
+                "/upcomingbirthdays - Ближайшие дни рождения\n" +
                 "/jubilee - Юбилейные дни рождения\n\n" +
                 "<b>Отмена операций:</b>\n" +
                 "/cancel - Отмена текущей команды";
