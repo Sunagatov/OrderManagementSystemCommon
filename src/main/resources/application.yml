@@ -8,13 +8,9 @@ telegram:
     token: ${TELEGRAM_BOT_TOKEN}
     username: ${TELEGRAM_BOT_USERNAME}
 
-# Spring Boot manages the version of spring-kafka automatically.
 kafka:
+  enabled: ${APP_KAFKA_ENABLED:false}  # Включение/отключение функционала метрик
+  topic: festiva.bot.metrics           # Имя топика для метрик
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
   api-key: ${KAFKA_API_KEY}
   api-secret: ${KAFKA_API_SECRET}
-
-# Application-specific property to enable/disable Kafka
-app:
-  kafka:
-    enabled: ${APP_KAFKA_ENABLED:false}
