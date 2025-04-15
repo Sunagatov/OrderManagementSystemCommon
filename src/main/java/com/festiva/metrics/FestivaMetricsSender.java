@@ -24,7 +24,7 @@ public class FestivaMetricsSender implements MetricsSender {
             @Value("${kafka.bootstrap-servers}") String bootstrapServers,
             @Value("${kafka.api-key}") String apiKey,
             @Value("${kafka.api-secret}") String apiSecret,
-            @Value("${kafka.topic:festiva.bot.metrics}") String topic) {
+            @Value("${kafka.topic}") String topic) {
 
         Properties props = new Properties();
         props.put("bootstrap.servers", bootstrapServers);
@@ -43,36 +43,61 @@ public class FestivaMetricsSender implements MetricsSender {
     }
 
     @Override
-    public void sendMetric(String jsonMessage) {
+    public void sendMetrics(String jsonMessage) {
         producer.send(new ProducerRecord<>(topic, jsonMessage));
     }
 
     @Override
-    public void produceMetric(Update update, String status, long processingTimeMillis) {
+    public void sendMetrics(Update update, String status, long processingTimeMillis) {
+        String jsonMessage = buildMetricsKafkaMessage(update, status, processingTimeMillis);
+        sendMetrics(jsonMessage);
+    }
+
+    private String buildMetricsKafkaMessage(Update update, String status, long processingTimeMillis) {
+        // Инициализируем значения по умолчанию
+        String command = "unknown";
+        String userName = "unknown";
         Long userId = null;
-        String command = "";
         if (update.hasMessage() && update.getMessage().getFrom() != null) {
+            // Получаем текст сообщения
+            String text = update.getMessage().getText() != null ? update.getMessage().getText().trim() : "";
+            if (!text.isEmpty() && text.startsWith("/")) {
+                String[] tokens = text.split("\\s+");
+                command = tokens[0];
+            } else {
+                command = text;
+            }
             userId = update.getMessage().getFrom().getId();
-            if (update.getMessage().hasText()) {
-                String text = update.getMessage().getText().trim();
-                String[] parts = text.split("\\s+");
-                if (parts.length > 0) {
-                    command = parts[0];
+            userName = update.getMessage().getFrom().getUserName();
+            if (userName == null || userName.isEmpty()) {
+                userName = update.getMessage().getFrom().getFirstName();
+                if (update.getMessage().getFrom().getLastName() != null) {
+                    userName += " " + update.getMessage().getFrom().getLastName();
                 }
             }
         } else if (update.hasCallbackQuery() && update.getCallbackQuery().getFrom() != null) {
+            // Если обновление является callback-запросом
             userId = update.getCallbackQuery().getFrom().getId();
             command = update.getCallbackQuery().getData();
+            userName = update.getCallbackQuery().getFrom().getUserName();
+            if (userName == null || userName.isEmpty()) {
+                userName = update.getCallbackQuery().getFrom().getFirstName();
+                if (update.getCallbackQuery().getFrom().getLastName() != null) {
+                    userName += " " + update.getCallbackQuery().getFrom().getLastName();
+                }
+            }
         }
-        String jsonMessage = String.format(
-                "{\"timestamp\":\"%s\", \"userId\":\"%s\", \"command\":\"%s\", \"status\":\"%s\", \"processingTimeMillis\":%d}",
+        if (userId == null) {
+            userId = 0L;
+        }
+        return String.format(
+                "{\"timestamp\":\"%s\", \"userId\":\"%d\", \"userName\":\"%s\", \"command\":\"%s\", \"status\":\"%s\", \"processingTimeMillis\":%d}",
                 Instant.now().toString(),
-                userId != null ? userId.toString() : "unknown",
+                userId,
+                userName,
                 command,
                 status,
-                processingTimeMillis
-        );
-        sendMetric(jsonMessage);
+                processingTimeMillis);
     }
 
     @PreDestroy

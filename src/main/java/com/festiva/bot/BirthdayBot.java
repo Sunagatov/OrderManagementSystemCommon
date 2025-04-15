@@ -48,10 +48,10 @@ public class BirthdayBot extends TelegramLongPollingBot {
                 log.warn("Update contains neither a message nor a callback query: {}", update);
             }
             final long duration = System.currentTimeMillis() - startTime;
-            metricsSender.produceMetric(update, "SUCCESS", duration);
+            metricsSender.sendMetrics(update, "SUCCESS", duration);
         } catch (Exception e) {
             final long duration = System.currentTimeMillis() - startTime;
-            metricsSender.produceMetric(update, "ERROR", duration);
+            metricsSender.sendMetrics(update, "ERROR", duration);
             log.error("Error processing update: {}", update, e);
         }
     }
